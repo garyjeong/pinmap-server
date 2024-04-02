@@ -7,7 +7,10 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { DatetimeColumn, ExtendCreateDateColumn } from './common.entity'
+import {
+  DatetimeColumn,
+  ExtendCreateDateColumn,
+} from './common.entity'
 import { Group } from './group.entity'
 
 @Entity({
@@ -18,11 +21,29 @@ export class User extends DatetimeColumn {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ unique: true, length: 20, nullable: false })
+  @Column({
+    unique: true,
+    length: 20,
+    nullable: false,
+    comment: '이메일',
+  })
   email: string
 
-  @Column({ length: 255, nullable: true, default: null })
+  @Column({
+    length: 255,
+    nullable: true,
+    default: null,
+    comment: '비밀번호, SNS의 경우 Null',
+  })
   password: string
+
+  @Column({
+    length: 255,
+    nullable: true,
+    default: null,
+    comment: '닉네임',
+  })
+  username: string
 
   @OneToMany(() => UserGroup, (userGroup) => userGroup.user)
   user_groups: UserGroup[]
