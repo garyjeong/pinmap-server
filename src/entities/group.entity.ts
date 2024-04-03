@@ -1,4 +1,9 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 import { DatetimeColumn } from './common.entity'
 import { UserGroup } from './user.entity'
 
@@ -10,7 +15,7 @@ export class Group extends DatetimeColumn {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ length: 20, nullable: false })
+  @Column({ length: 20, nullable: false, comment: '그룹 이름' })
   name: string
 
   @OneToMany(() => UserGroup, (userGroup) => userGroup.group)
