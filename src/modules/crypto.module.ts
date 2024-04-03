@@ -1,8 +1,15 @@
-import * as bcrypt from 'bcrypt'
+import { hashSync, compareSync } from 'bcrypt'
 
-export async function hashedPassword(
+export async function setHashedPassword(
   password: string,
+  salt: number,
 ): Promise<string> {
-  const saltOrRounds = 20
-  return await bcrypt.hash(password, saltOrRounds)
+  return hashSync(password, salt)
+}
+
+export async function compareSyncPassword(
+  password: string,
+  input_password: string,
+): Promise<boolean> {
+  return compareSync(password, input_password) ? true : false
 }

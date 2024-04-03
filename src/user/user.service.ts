@@ -23,7 +23,7 @@ export class UserService {
     })
   }
 
-  async createUser(data: AuthRequestDto.Signup): Promise<User> {
+  async createUser(data: AuthRequestDto.SignUp): Promise<User> {
     const user = await this.userRepository.create({
       ...data,
     })

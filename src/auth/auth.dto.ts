@@ -1,7 +1,7 @@
 import { IsEmail, IsString, Length } from 'class-validator'
 
 export namespace AuthRequestDto {
-  export class Signin {
+  export class SignIn {
     @IsEmail()
     email: string
 
@@ -10,7 +10,7 @@ export namespace AuthRequestDto {
     password: string
   }
 
-  export class Signup {
+  export class SignUp {
     @IsEmail()
     email: string
 

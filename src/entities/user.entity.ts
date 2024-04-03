@@ -48,11 +48,6 @@ export class User extends DatetimeColumn {
 
   @OneToMany(() => UserGroup, (userGroup) => userGroup.user)
   user_groups: UserGroup[]
-
-  @BeforeInsert()
-  private beforePasswordInsert() {
-    this.password = hashSync(this.password, 10)
-  }
 }
 
 @Entity({

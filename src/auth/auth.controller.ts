@@ -1,7 +1,6 @@
 import {
   Controller,
   HttpStatus,
-  UnauthorizedException,
   HttpCode,
   Post,
   Body,
@@ -12,43 +11,52 @@ import {
   NotMatchedPasswordException,
   UserNotFoundException,
 } from 'src/commons/custom.error'
-import { hashedPassword } from 'src/modules/crypto.module'
+import {
+  compareSyncPassword,
+  setHashedPassword,
+} from 'src/modules/crypto.module'
 import { UserService } from 'src/user/user.service'
 import { AuthRequestDto, AuthResponseDto } from './auth.dto'
-import { createToken } from 'src/modules/jwt.module'
+import { ConfigService } from '@nestjs/config'
+import { validate as uuidValidate } from 'uuid'
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   @HttpCode(HttpStatus.OK)
   @Post('sign/in')
   async SignIn(
-    email: string,
-    password: string,
+    @Body() data: AuthRequestDto.SignIn,
   ): Promise<AuthResponseDto.Token> {
-    const user = await this.usersService.getUserByEmail(email)
+    const user = await this.usersService.getUserByEmail(data.email)
     if (!user) {
       throw new UserNotFoundException()
     }
+
     if (
-      !password ||
-      (await hashedPassword(password)) != user.password
+      !data.password ||
+      (await compareSyncPassword(user.password, data.password))
     ) {
       throw new NotMatchedPasswordException()
     }
-    const payload = { id: user.id }
-    const accessToken = this.jwtService.sign(payload)
-    return { access_token: accessToken }
+
+    if (!uuidValidate(user.id)) {
+      throw new Error('Invalid UUID')
+    }
+
+    const token = await this.jwtService.sign({ id: user.id })
+    return new AuthResponseDto.Token(token)
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('sign/up')
   async SignUp(
-    @Body() data: AuthRequestDto.Signup,
+    @Body() data: AuthRequestDto.SignUp,
   ): Promise<AuthResponseDto.Token> {
     const isDuplication = await this.usersService.existedEmail(
       data.email,
@@ -56,7 +64,17 @@ export class AuthController {
     if (isDuplication) {
       throw new DuplicationEmailException()
     }
+
+    data.password = await setHashedPassword(
+      data.password,
+      parseInt(this.configService.get('HASH_KEY')),
+    )
     const user = await this.usersService.createUser(data)
-    return new AuthResponseDto.Token(await createToken(user.id))
+    if (!uuidValidate(user.id)) {
+      throw new Error('Invalid UUID')
+    }
+
+    const token = await this.jwtService.sign({ id: user.id })
+    return new AuthResponseDto.Token(token)
   }
 }
