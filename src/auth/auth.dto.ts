@@ -1,11 +1,35 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { OmitType } from '@nestjs/mapped-types'
+import { IsEmail, IsString, Length } from 'class-validator'
 
-class User {
-  id: number
-  email: string
-  password: string
-  username: string
+export namespace AuthRequestDto {
+  export class Signin {
+    @IsEmail()
+    email: string
+
+    @IsString()
+    @Length(10)
+    password: string
+  }
+
+  export class Signup {
+    @IsEmail()
+    email: string
+
+    @IsString()
+    @Length(10)
+    password: string
+
+    @IsString()
+    username: string
+  }
 }
 
-export class InsertUserDto extends OmitType(User, ['id' as const]) {}
+export namespace AuthResponseDto {
+  export class Token {
+    @IsString()
+    access_token: string
+
+    constructor(access_token: string) {
+      this.access_token = access_token
+    }
+  }
+}
