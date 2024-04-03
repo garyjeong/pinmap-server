@@ -38,9 +38,10 @@ export class AuthController {
       throw new UserNotFoundException()
     }
 
+    const a = await compareSyncPassword(user.password, data.password)
     if (
       !data.password ||
-      (await compareSyncPassword(user.password, data.password))
+      !(await compareSyncPassword(user.password, data.password))
     ) {
       throw new NotMatchedPasswordException()
     }
@@ -67,7 +68,7 @@ export class AuthController {
 
     data.password = await setHashedPassword(
       data.password,
-      parseInt(this.configService.get('HASH_KEY')),
+      parseInt(this.configService.get('HASH_SALT')),
     )
     const user = await this.usersService.createUser(data)
     if (!uuidValidate(user.id)) {
