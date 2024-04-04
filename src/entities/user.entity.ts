@@ -1,5 +1,4 @@
 import {
-  BeforeInsert,
   Column,
   Entity,
   JoinColumn,
@@ -7,10 +6,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import {
-  DatetimeColumn,
-  ExtendCreateDateColumn,
-} from './common.entity'
+import { DatetimeColumn } from './common.entity'
 import { Group } from './group.entity'
 
 @Entity({
@@ -50,12 +46,31 @@ export class User extends DatetimeColumn {
 }
 
 @Entity({
+  name: 'user_group_status',
+  comment: '사용자 그룹 참여에 대한 상태 테이블',
+})
+export class UserGroupStatus {
+  @PrimaryGeneratedColumn()
+  id: number
+
+  @Column({
+    length: 100,
+    nullable: false,
+    comment: '그룹 참여 상태명',
+  })
+  status_name: string
+}
+
+@Entity({
   name: 'user_group',
   comment: '사용자와 그룹 중간 테이블',
 })
-export class UserGroup extends ExtendCreateDateColumn {
+export class UserGroup extends DatetimeColumn {
   @PrimaryGeneratedColumn()
   id: number
+
+  @Column({ nullable: false, comment: '그룹장 여부' })
+  is_owner: boolean
 
   @ManyToOne(() => User, (user) => user.user_groups)
   @JoinColumn({ name: 'user_id' })
@@ -64,4 +79,8 @@ export class UserGroup extends ExtendCreateDateColumn {
   @ManyToOne(() => Group, (group) => group.user_groups)
   @JoinColumn({ name: 'group_id' })
   group: Group
+
+  @ManyToOne(() => UserGroupStatus)
+  @JoinColumn({ name: 'status_id' })
+  status: UserGroupStatus
 }
