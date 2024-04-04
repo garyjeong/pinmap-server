@@ -24,7 +24,7 @@ export const options: DataSourceOptions = {
   database: process.env.DB_DATABASE,
   synchronize: false,
   entities: [User, UserGroup, Group],
-  migrations: ['dist/migration/**/*.js'],
+  migrations: ['dist/migrations/**/*.js'],
   migrationsRun: false,
   migrationsTableName: 'migrations',
   timezone: 'Z',
