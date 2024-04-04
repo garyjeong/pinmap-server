@@ -1,0 +1,10 @@
+.vscode
+dist
+dockerfiles
+node_modules
+test
+.dockerignore
+.eslintrc.js
+.gitignore
+.prettierrc
+README.md

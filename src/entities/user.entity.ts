@@ -11,7 +11,6 @@ import {
   DatetimeColumn,
   ExtendCreateDateColumn,
 } from './common.entity'
-import { hashSync } from 'bcrypt'
 import { Group } from './group.entity'
 
 @Entity({
