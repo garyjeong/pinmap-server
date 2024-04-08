@@ -1,6 +1,8 @@
 import { config } from 'dotenv'
 import { Group } from 'src/entities/group.entity'
-import { User, UserGroup } from 'src/entities/user.entity'
+import { UserGroupStatus } from 'src/entities/user-group-status.entity'
+import { UserGroup } from 'src/entities/user-group.entity'
+import { User } from 'src/entities/user.entity'
 import { DataSource, DataSourceOptions } from 'typeorm'
 
 let config_path = '.env'
@@ -23,8 +25,9 @@ export const options: DataSourceOptions = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   synchronize: false,
-  entities: [User, UserGroup, Group],
-  migrations: ['dist/migration/**/*.js'],
+  logging: true,
+  entities: [User, UserGroup, UserGroupStatus, Group],
+  migrations: ['dist/migrations/**/*.js'],
   migrationsRun: false,
   migrationsTableName: 'migrations',
   timezone: 'Z',

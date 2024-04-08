@@ -1,25 +1,24 @@
 import {
-  BeforeInsert,
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import {
-  DatetimeColumn,
-  ExtendCreateDateColumn,
-} from './common.entity'
-import { hashSync } from 'bcrypt'
-import { Group } from './group.entity'
+import { DatetimeColumn } from './common.entity'
+import { UserGroup } from './user-group.entity'
+import { UUID } from 'crypto'
 
 @Entity({
   name: 'user',
   comment: '사용자 테이블',
 })
 export class User extends DatetimeColumn {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn({
+    name: 'id',
+  })
   id: string
 
   @Column({
@@ -46,23 +45,8 @@ export class User extends DatetimeColumn {
   })
   username: string
 
-  @OneToMany(() => UserGroup, (userGroup) => userGroup.user)
-  user_groups: UserGroup[]
-}
-
-@Entity({
-  name: 'user_group',
-  comment: '사용자와 그룹 중간 테이블',
-})
-export class UserGroup extends ExtendCreateDateColumn {
-  @PrimaryGeneratedColumn()
-  id: number
-
-  @ManyToOne(() => User, (user) => user.user_groups)
-  @JoinColumn({ name: 'user_id' })
-  user: User
-
-  @ManyToOne(() => Group, (group) => group.user_groups)
-  @JoinColumn({ name: 'group_id' })
-  group: Group
+  @OneToMany(() => UserGroup, (usergroup) => usergroup.users, {
+    nullable: true,
+  })
+  user_groups?: UserGroup[]
 }

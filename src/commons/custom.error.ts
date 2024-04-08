@@ -32,3 +32,43 @@ export class DuplicationEmailException extends ForbiddenException {
     this.name = 'DuplicationEmailException'
   }
 }
+
+export class NotFoundTokenException extends UnauthorizedException {
+  constructor(
+    message: string = '인증 토큰이 없습니다.',
+    public error_code: number = 1004,
+  ) {
+    super(message)
+    this.name = 'NotFoundTokenException'
+  }
+}
+
+export class ForbiddenAuthenticationException extends ForbiddenException {
+  constructor(
+    message: string = '알 수 없는 사용자입니다.',
+    public error_code: number = 1005,
+  ) {
+    super(message)
+    this.name = 'ForbiddenAuthenticationException'
+  }
+}
+
+export class WrongTokenException extends ForbiddenException {
+  constructor(
+    message: string = '잘 못 된 토큰입니다.',
+    public error_code: number = 1006,
+  ) {
+    super(message)
+    this.name = 'WrongTokenException'
+  }
+}
+
+export class NotFoundUserException extends ForbiddenException {
+  constructor(
+    message: string = '사용자를 찾을 수 없습니다.',
+    public error_code: number = 1007,
+  ) {
+    super(message)
+    this.name = 'NotFoundUserException'
+  }
+}

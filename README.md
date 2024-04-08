@@ -26,3 +26,12 @@ $ yarn migration:generate src/migration/{migration_content}
 # NOTE: Migration 파일을 모두 자동 적용
 $ yarn migration:run
 ```
+
+## Local Docker
+```bash
+docker network create pinmap-network
+docker build -f dockerfiles/local.database.Dockerfile -t pinmap-database .
+docker run --network pinmap-network --name pinmap-database -p 6000:3306 -d pinmap-database
+docker build -f dockerfiles/local.Dockerfile -t pinmap-server .
+docker run --network pinmap-network --name pinmap-server -p 4000:3000 -d pinmap-server
+```
