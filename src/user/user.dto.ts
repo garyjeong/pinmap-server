@@ -1,12 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Expose } from 'class-transformer'
 import {
   IsDateString,
   IsEmail,
   IsNotEmpty,
   IsString,
 } from 'class-validator'
+import * as moment from 'moment'
 
+export namespace UserRequestDto {
+  export class PatchUserDto {
+    @ApiProperty({ description: '닉네임' })
+    @IsString()
+    username?: string
+  }
+}
 export namespace UserResponseDto {
   export class User {
     @ApiProperty({ description: '아이디' })
@@ -27,7 +34,7 @@ export namespace UserResponseDto {
     @ApiProperty({ description: '생성일' })
     @IsNotEmpty()
     @IsDateString()
-    public created_at: Date
+    public created_at: string
 
     constructor(
       id: string,
@@ -38,8 +45,9 @@ export namespace UserResponseDto {
       this.id = id
       this.email = email
       this.username = username
-      this.created_at = created_at
-      Object.seal(this)
+      this.created_at = moment(created_at).format(
+        'YYYY-MM-DD HH:mm:ss',
+      )
     }
   }
 }

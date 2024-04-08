@@ -33,4 +33,12 @@ export class UserService {
     })
     return await this.userRepository.save(user)
   }
+
+  async modifyUser(id: string, data: Partial<User>): Promise<void> {
+    await this.userRepository.update(id, data)
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await this.userRepository.softDelete(id)
+  }
 }
