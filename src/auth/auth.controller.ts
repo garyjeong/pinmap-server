@@ -38,16 +38,11 @@ export class AuthController {
       throw new UserNotFoundException()
     }
 
-    const a = await compareSyncPassword(user.password, data.password)
     if (
       !data.password ||
       !(await compareSyncPassword(user.password, data.password))
     ) {
       throw new NotMatchedPasswordException()
-    }
-
-    if (!uuidValidate(user.id)) {
-      throw new Error('Invalid UUID')
     }
 
     const token = await this.jwtService.sign({ id: user.id })
@@ -71,10 +66,6 @@ export class AuthController {
       parseInt(this.configService.get('HASH_SALT')),
     )
     const user = await this.usersService.createUser(data)
-    if (!uuidValidate(user.id)) {
-      throw new Error('Invalid UUID')
-    }
-
     const token = await this.jwtService.sign({ id: user.id })
     return new AuthResponseDto.Token(token)
   }
