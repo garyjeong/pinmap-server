@@ -15,18 +15,24 @@ import {
   compareSyncPassword,
   setHashedPassword,
 } from 'src/modules/crypto.module'
-import { UserService } from 'src/user/user.service'
+import { UserService } from 'src/api/user/user.service'
 import { AuthRequestDto, AuthResponseDto } from './auth.dto'
 import { ConfigService } from '@nestjs/config'
-import { validate as uuidValidate } from 'uuid'
+import { ApiTags } from '@nestjs/swagger'
+import { PinoLogger, InjectPinoLogger } from 'nestjs-pino'
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) {}
+    @InjectPinoLogger(AuthController.name)
+    private readonly logger: PinoLogger,
+  ) {
+    this.logger.setContext(AuthController.name)
+  }
 
   @HttpCode(HttpStatus.OK)
   @Post('sign/in')

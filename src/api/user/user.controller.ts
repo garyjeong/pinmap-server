@@ -15,14 +15,22 @@ import {
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { UserRequestDto, UserResponseDto } from './user.dto'
-import { AuthGuard } from 'src/auth/auth.guard'
-import { ApiOkResponse, ApiResponse } from '@nestjs/swagger'
+import { AuthGuard } from 'src/api/auth/auth.guard'
+import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { NotFoundUserException } from 'src/commons/custom.error'
 import { SuccessResponse } from 'src/commons/common.response'
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 
+@ApiTags('User')
 @Controller('users')
 export class UserController {
-  constructor(private usersService: UserService) {}
+  constructor(
+    private usersService: UserService,
+    @InjectPinoLogger(UserController.name)
+    private readonly logger: PinoLogger,
+  ) {
+    this.logger.setContext(UserController.name)
+  }
 
   @UseGuards(AuthGuard)
   @ApiOkResponse({
