@@ -1,3 +1,5 @@
+import { GroupModule } from './api/group/group.module'
+import { GroupController } from './api/group/group.controller'
 import { Module, RequestMethod } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -14,12 +16,15 @@ import {
   customSuccessObject,
 } from './configs/logger.config'
 import pino from 'pino'
+import { JwtModule } from '@nestjs/jwt'
+import { JwtAuthModule } from './api/auth/jwt/jwt.module'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    JwtAuthModule,
     TypeOrmModule.forRoot(options),
     LoggerModule.forRootAsync({
       imports: [ConfigModule],
@@ -52,7 +57,8 @@ import pino from 'pino'
     }),
     AuthModule,
     UserModule,
+    GroupModule,
   ],
-  controllers: [],
+  controllers: [GroupController],
 })
 export class AppModule {}

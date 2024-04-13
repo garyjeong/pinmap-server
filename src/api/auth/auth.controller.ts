@@ -14,7 +14,7 @@ import {
 import {
   compareSyncPassword,
   setHashedPassword,
-} from 'src/modules/crypto.module'
+} from 'src/utils/crypto.util'
 import { UserService } from 'src/api/user/user.service'
 import { AuthRequestDto, AuthResponseDto } from './auth.dto'
 import { ConfigService } from '@nestjs/config'
