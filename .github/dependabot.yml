@@ -1,0 +1,17 @@
+version: 2
+updates:
+- package-ecosystem: "pip"
+  directory: "/"
+  schedule:
+    interval: "daily"
+    time: "09:00"
+    timezone: "Asia/Seoul"
+  target-branch: "develop"
+  insecure-external-code-execution: deny
+  commit-message:
+    prefix: "build"
+    include: "scope"
+- package-ecosystem: "docker"
+  directory: "/dockerfiles"
+  schedule:
+    interval: "weekly"
