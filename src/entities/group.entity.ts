@@ -13,7 +13,7 @@ import { UserGroup } from './user-group.entity'
   comment: '사용자 그룹 테이블',
 })
 export class Group extends DatetimeColumn {
-  @PrimaryGeneratedColumn('uuid', {
+  @PrimaryGeneratedColumn('increment', {
     name: 'id',
   })
   id: number

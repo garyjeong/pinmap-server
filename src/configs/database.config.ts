@@ -1,5 +1,7 @@
 import { config } from 'dotenv'
+import { Folder } from 'src/entities/folder.entity'
 import { Group } from 'src/entities/group.entity'
+import { Photo } from 'src/entities/photo.entity'
 import { UserGroupStatus } from 'src/entities/user-group-status.entity'
 import { UserGroup } from 'src/entities/user-group.entity'
 import { User } from 'src/entities/user.entity'
@@ -26,7 +28,7 @@ export const options: DataSourceOptions = {
   database: process.env.DB_DATABASE,
   synchronize: false,
   logging: false,
-  entities: [User, UserGroup, UserGroupStatus, Group],
+  entities: [User, UserGroup, UserGroupStatus, Group, Photo, Folder],
   migrations: ['dist/migrations/**/*.js'],
   migrationsRun: false,
   migrationsTableName: 'migrations',
