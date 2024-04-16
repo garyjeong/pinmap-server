@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import {
   IsDateString,
   IsEmail,
+  IsInt,
   IsNotEmpty,
   IsString,
 } from 'class-validator'
@@ -18,26 +19,26 @@ export namespace UserResponseDto {
   export class User {
     @ApiProperty({ description: '아이디' })
     @IsNotEmpty()
-    @IsString()
-    public id: string
+    @IsInt()
+    id: number
 
     @ApiProperty({ description: '이메일' })
     @IsNotEmpty()
     @IsEmail()
-    public email: string
+    email: string
 
     @ApiProperty({ description: '닉네임' })
     @IsNotEmpty()
     @IsString()
-    public username: string
+    username: string
 
     @ApiProperty({ description: '생성일' })
     @IsNotEmpty()
     @IsDateString()
-    public created_at: string
+    created_at: string
 
     constructor(
-      id: string,
+      id: number,
       email: string,
       username: string,
       created_at: Date,

@@ -18,7 +18,7 @@ export class User extends DatetimeColumn {
   @PrimaryGeneratedColumn('increment', {
     name: 'id',
   })
-  id: string
+  id: number
 
   @Column({
     unique: true,

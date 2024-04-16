@@ -24,13 +24,24 @@ export class UserGroup extends DatetimeColumn {
   @Column({ nullable: false, comment: '그룹장 여부' })
   is_owner: boolean
 
+  @Column({ nullable: false, comment: '사용자 아이디' })
+  user_id: number
+
+  @Column({ nullable: false, comment: '그룹 아이디' })
+  group_id: number
+
+  @Column({ nullable: false, comment: '상태 아이디' })
+  status_id: number
+
   @ManyToOne(() => User, (user) => user.user_groups)
+  @JoinColumn({ name: 'user_id' })
   users: User[]
 
   @ManyToOne(() => Group, (group) => group.user_groups)
+  @JoinColumn({ name: 'group_id' })
   group: Group
 
   @ManyToOne(() => UserGroupStatus)
-  @JoinColumn()
+  @JoinColumn({ name: 'status_id' })
   status: UserGroupStatus
 }

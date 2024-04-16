@@ -19,7 +19,6 @@ import { UserService } from 'src/api/user/user.service'
 import { AuthRequestDto, AuthResponseDto } from './auth.dto'
 import { ConfigService } from '@nestjs/config'
 import { ApiTags } from '@nestjs/swagger'
-import { PinoLogger, InjectPinoLogger } from 'nestjs-pino'
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -28,11 +27,7 @@ export class AuthController {
     private usersService: UserService,
     private jwtService: JwtService,
     private configService: ConfigService,
-    @InjectPinoLogger(AuthController.name)
-    private readonly logger: PinoLogger,
-  ) {
-    this.logger.setContext(AuthController.name)
-  }
+  ) {}
 
   @HttpCode(HttpStatus.OK)
   @Post('sign/in')

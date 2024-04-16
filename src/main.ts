@@ -4,7 +4,6 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 
 import * as dotenv from 'dotenv'
 import { ValidationPipe } from '@nestjs/common'
-import { Logger, LoggerErrorInterceptor } from 'nestjs-pino'
 
 dotenv.config()
 
@@ -13,8 +12,6 @@ async function bootstrap() {
     bufferLogs: true,
   })
   app.useGlobalPipes(new ValidationPipe())
-  app.useLogger(app.get(Logger))
-  app.useGlobalInterceptors(new LoggerErrorInterceptor())
 
   const config = new DocumentBuilder()
     .setTitle('Pinmap Server Swagger')

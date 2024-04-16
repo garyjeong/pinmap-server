@@ -17,7 +17,7 @@ export class UserService {
     })
   }
 
-  async getUserById(id: string): Promise<User> {
+  async getUserById(id: number): Promise<User> {
     return await this.userRepository.findOne({ where: { id: id } })
   }
 
@@ -34,11 +34,11 @@ export class UserService {
     return await this.userRepository.save(user)
   }
 
-  async modifyUser(id: string, data: Partial<User>): Promise<void> {
+  async modifyUser(id: number, data: Partial<User>): Promise<void> {
     await this.userRepository.update(id, data)
   }
 
-  async deleteUser(id: string): Promise<void> {
+  async deleteUser(id: number): Promise<void> {
     await this.userRepository.softDelete(id)
   }
 }
