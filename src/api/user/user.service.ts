@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { AuthRequestDto } from 'src/api/auth/auth.dto'
 import { User } from 'src/entities/user.entity'
-import { Repository } from 'typeorm'
+import { EntityManager, Repository } from 'typeorm'
 
 @Injectable()
 export class UserService {
@@ -16,6 +16,7 @@ export class UserService {
       where: { email: email },
     })
   }
+
   async isRemovedEmail(email: string): Promise<boolean> {
     return (
       (await this.userRepository
@@ -24,6 +25,13 @@ export class UserService {
         .withDeleted()
         .getCount()) > 0
     )
+  }
+
+  async getUserByIdWithTransaction(
+    queryRunner: EntityManager,
+    id: number,
+  ): Promise<User> {
+    return await queryRunner.findOne(User, { where: { id: id } })
   }
 
   async getUserById(id: number): Promise<User> {

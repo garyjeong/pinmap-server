@@ -29,20 +29,16 @@ export class GroupService {
     return user.user_groups.map((user_group) => user_group.group)
   }
 
-  async createGroup(
-    transactionManager: EntityManager,
-    userId: number,
-    name: string,
-  ): Promise<Group> {
-    const group = await transactionManager.create(Group, {
-      name: name,
-    })
-    await transactionManager.create(UserGroup, {
-      user_id: userId,
-      group_id: group.id,
-      status_id: UserGroupStatus.INVITED,
-      is_owner: true,
-    })
-    return group
-  }
+  // async createGroup(userId: number, name: string): Promise<Group> {
+  // const group = await transactionManager.create(Group, {
+  //   name: name,
+  // })
+  // await transactionManager.create(UserGroup, {
+  //   user_id: userId,
+  //   group_id: group.id,
+  //   status_id: UserGroupStatus.INVITED,
+  //   is_owner: true,
+  // })
+  // return group
+  // }
 }

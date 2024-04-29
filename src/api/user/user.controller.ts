@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Delete,
+  UseInterceptors,
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { UserRequestDto, UserResponseDto } from './user.dto'
@@ -13,21 +14,31 @@ import { AuthGuard } from 'src/api/auth/auth.guard'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { NotFoundUserException } from 'src/commons/custom.error'
 import { SuccessResponse } from 'src/commons/common.response'
+import {
+  TransactionInterceptor,
+  TransactionManager,
+} from 'src/middleware/transaction.intercepter'
+import { EntityManager } from 'typeorm'
 
 @ApiTags('User')
 @Controller('users')
 export class UserController {
   constructor(private usersService: UserService) {}
 
+  @Get('')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: UserResponseDto.User,
   })
-  @Get('')
+  @UseInterceptors(TransactionInterceptor)
   async getUser(
+    @TransactionManager() queryRunner: EntityManager,
     @Param('id') id: number,
   ): Promise<UserResponseDto.User> {
-    const user = await this.usersService.getUserById(id)
+    const user = await this.usersService.getUserByIdWithTransaction(
+      queryRunner,
+      id,
+    )
     return new UserResponseDto.User(
       user.id,
       user.email,
