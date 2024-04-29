@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt'
 import {
   DuplicationEmailException,
   NotMatchedPasswordException,
+  RemovedEmailException,
   UserNotFoundException,
 } from 'src/commons/custom.error'
 import {
@@ -55,11 +56,12 @@ export class AuthController {
   async SignUp(
     @Body() data: AuthRequestDto.SignUp,
   ): Promise<AuthResponseDto.Token> {
-    const isDuplication = await this.usersService.existedEmail(
-      data.email,
-    )
-    if (isDuplication) {
+    if (await this.usersService.existedEmail(data.email)) {
       throw new DuplicationEmailException()
+    }
+
+    if (await this.usersService.isRemovedEmail(data.email)) {
+      throw new RemovedEmailException()
     }
 
     data.password = await setHashedPassword(

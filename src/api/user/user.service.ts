@@ -16,6 +16,15 @@ export class UserService {
       where: { email: email },
     })
   }
+  async isRemovedEmail(email: string): Promise<boolean> {
+    return (
+      (await this.userRepository
+        .createQueryBuilder('user')
+        .where('user.email = :email', { email })
+        .withDeleted()
+        .getCount()) > 0
+    )
+  }
 
   async getUserById(id: number): Promise<User> {
     return await this.userRepository.findOne({ where: { id: id } })

@@ -1,11 +1,12 @@
 import {
   CallHandler,
+  createParamDecorator,
   ExecutionContext,
   Injectable,
   NestInterceptor,
 } from '@nestjs/common'
 import { Observable } from 'rxjs'
-import { catchError, map } from 'rxjs/operators'
+import { catchError, finalize, tap } from 'rxjs/operators'
 import { DataSource, QueryRunner } from 'typeorm'
 
 @Injectable()
@@ -16,29 +17,34 @@ export class TransactionInterceptor implements NestInterceptor {
     next: CallHandler,
   ): Promise<Observable<any>> {
     const req = context.switchToHttp().getRequest()
+    const queryRunner: QueryRunner =
+      await this.dataSource.createQueryRunner()
+    try {
+      req.queryRunnerManager = queryRunner.manager
+      await queryRunner.connect()
+      await queryRunner.startTransaction()
 
-    const queryRunner: QueryRunner = await this.dbInit()
-
-    req.queryRunnerManager = queryRunner.manager
-
-    return next.handle().pipe(
-      map(async (data) => {
-        await queryRunner.commitTransaction()
-        await queryRunner.release()
-        return data
-      }),
-      catchError(async (err) => {
-        await queryRunner.rollbackTransaction()
-        await queryRunner.release()
-        throw err
-      }),
-    )
-  }
-
-  private async dbInit(): Promise<QueryRunner> {
-    const queryRunner = this.dataSource.createQueryRunner()
-    await queryRunner.connect()
-    await queryRunner.startTransaction()
-    return queryRunner
+      return next.handle().pipe(
+        tap(() => queryRunner.commitTransaction()),
+        catchError(async (error) => {
+          await queryRunner.rollbackTransaction()
+          throw error
+        }),
+        finalize(async () => {
+          await queryRunner.release()
+        }),
+      )
+    } catch (error) {
+      await queryRunner.rollbackTransaction()
+      await queryRunner.release()
+      throw error
+    }
   }
 }
+
+export const TransactionManager = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const req = ctx.switchToHttp().getRequest()
+    return req.queryRunnerManager
+  },
+)
