@@ -1,9 +1,9 @@
+import { FolderModule } from './api/folder/folder.module'
 import { GroupModule } from './api/group/group.module'
 import {
   MiddlewareConsumer,
   Module,
   NestModule,
-  RequestMethod,
 } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -15,6 +15,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware'
 
 @Module({
   imports: [
+    FolderModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
