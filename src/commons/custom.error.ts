@@ -76,9 +76,19 @@ export class NotFoundUserException extends ForbiddenException {
 export class RemovedEmailException extends ForbiddenException {
   constructor(
     message: string = '탈퇴한 이메일입니다.',
-    public error_code: number = 1003,
+    public error_code: number = 1008,
   ) {
     super(message)
     this.name = 'RemovedEmailException'
+  }
+}
+
+export class NotFoundGroupException extends ForbiddenException {
+  constructor(
+    message: string = '탈퇴한 이메일입니다.',
+    public error_code: number = 1009,
+  ) {
+    super(message)
+    this.name = 'NotFoundGroupException'
   }
 }

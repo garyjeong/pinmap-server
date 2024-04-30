@@ -3,7 +3,7 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
 import * as moment from 'moment'
 
 export namespace GroupRequestDto {
-  export class Group {
+  export class GroupDto {
     @ApiProperty({ description: '그룹명' })
     @IsNotEmpty()
     @IsString()
@@ -48,9 +48,9 @@ export namespace GroupResponseDto {
       this.created_at = moment(created_at).format(
         'YYYY-MM-DD HH:mm:ss',
       )
-      this.updated_at = moment(updated_at).format(
-        'YYYY-MM-DD HH:mm:ss',
-      )
+      this.updated_at = updated_at
+        ? moment(updated_at).format('YYYY-MM-DD HH:mm:ss')
+        : null
     }
   }
 

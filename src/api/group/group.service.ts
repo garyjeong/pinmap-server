@@ -9,18 +9,14 @@ import { EntityManager, Repository } from 'typeorm'
 
 @Injectable()
 export class GroupService {
-  constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    @InjectRepository(Group)
-    private groupRepository: Repository<Group>,
-    @InjectRepository(UserGroup)
-    private usergroupRepository: Repository<UserGroup>,
-  ) {}
+  constructor() {}
 
-  async getGroups(id: number): Promise<Group[]> {
-    const user = await this.userRepository.findOne({
-      where: { id: id },
+  async getGroups(
+    queryRunner: EntityManager,
+    userId: number,
+  ): Promise<Group[]> {
+    const user = await queryRunner.findOne(User, {
+      where: { id: userId },
       relations: ['user_groups', 'user_groups.group'],
     })
     if (!user) {
@@ -29,16 +25,42 @@ export class GroupService {
     return user.user_groups.map((user_group) => user_group.group)
   }
 
-  // async createGroup(userId: number, name: string): Promise<Group> {
-  // const group = await transactionManager.create(Group, {
-  //   name: name,
-  // })
-  // await transactionManager.create(UserGroup, {
-  //   user_id: userId,
-  //   group_id: group.id,
-  //   status_id: UserGroupStatus.INVITED,
-  //   is_owner: true,
-  // })
-  // return group
-  // }
+  async getGroup(
+    queryRunner: EntityManager,
+    userId: number,
+    groupId: number,
+  ): Promise<Group> {
+    const groups = await this.getGroups(queryRunner, userId)
+    return groups.find((group) => group.id === groupId)
+  }
+
+  async createGroup(
+    queryRunner: EntityManager,
+    userId: number,
+    name: string,
+  ): Promise<Group> {
+    const group = await queryRunner.create(Group, { name: name })
+    await queryRunner.create(UserGroup, {
+      user_id: userId,
+      group_id: group.id,
+      status_id: UserGroupStatus.INVITED,
+      is_owner: true,
+    })
+    return group
+  }
+
+  async modifyGroup(
+    queryRunner: EntityManager,
+    groupId: number,
+    data: Partial<Group>,
+  ): Promise<void> {
+    await queryRunner.update(Group, groupId, data)
+  }
+
+  async deleteGroup(
+    queryRunner: EntityManager,
+    groupId: number,
+  ): Promise<void> {
+    await queryRunner.softDelete(Group, groupId)
+  }
 }

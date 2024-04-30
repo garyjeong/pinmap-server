@@ -4,6 +4,7 @@ import {
   HttpCode,
   Post,
   Body,
+  UseInterceptors,
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import {
@@ -20,6 +21,11 @@ import { UserService } from 'src/api/user/user.service'
 import { AuthRequestDto, AuthResponseDto } from './auth.dto'
 import { ConfigService } from '@nestjs/config'
 import { ApiTags } from '@nestjs/swagger'
+import {
+  TransactionInterceptor,
+  TransactionManager,
+} from 'src/middleware/transaction.intercepter'
+import { EntityManager } from 'typeorm'
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -30,12 +36,17 @@ export class AuthController {
     private configService: ConfigService,
   ) {}
 
-  @HttpCode(HttpStatus.OK)
   @Post('sign/in')
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(TransactionInterceptor)
   async SignIn(
+    @TransactionManager() queryRunner: EntityManager,
     @Body() data: AuthRequestDto.SignIn,
   ): Promise<AuthResponseDto.Token> {
-    const user = await this.usersService.getUserByEmail(data.email)
+    const user = await this.usersService.getUserByEmail(
+      queryRunner,
+      data.email,
+    )
     if (!user) {
       throw new UserNotFoundException()
     }
@@ -51,16 +62,22 @@ export class AuthController {
     return new AuthResponseDto.Token(token)
   }
 
-  @HttpCode(HttpStatus.OK)
   @Post('sign/up')
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(TransactionInterceptor)
   async SignUp(
+    @TransactionManager() queryRunner: EntityManager,
     @Body() data: AuthRequestDto.SignUp,
   ): Promise<AuthResponseDto.Token> {
-    if (await this.usersService.existedEmail(data.email)) {
+    if (
+      await this.usersService.existedEmail(queryRunner, data.email)
+    ) {
       throw new DuplicationEmailException()
     }
 
-    if (await this.usersService.isRemovedEmail(data.email)) {
+    if (
+      await this.usersService.isRemovedEmail(queryRunner, data.email)
+    ) {
       throw new RemovedEmailException()
     }
 
@@ -68,7 +85,7 @@ export class AuthController {
       data.password,
       parseInt(this.configService.get('HASH_SALT')),
     )
-    const user = await this.usersService.createUser(data)
+    const user = await this.usersService.createUser(queryRunner, data)
     const token = await this.jwtService.sign({ id: user.id })
     return new AuthResponseDto.Token(token)
   }
