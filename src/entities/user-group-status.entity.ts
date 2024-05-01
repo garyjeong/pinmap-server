@@ -11,6 +11,7 @@ export class UserGroupStatus {
   id: number
 
   @Column({
+    name: 'status_name',
     length: 100,
     nullable: false,
     comment: '그룹 참여 상태명',

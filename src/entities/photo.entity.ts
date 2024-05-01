@@ -20,6 +20,7 @@ export class Photo extends DatetimeColumn {
   id: string
 
   @Column({
+    name: 'filename',
     type: 'varchar',
     length: 100,
     nullable: false,
@@ -28,6 +29,7 @@ export class Photo extends DatetimeColumn {
   filename: string
 
   @Column({
+    name: 'url',
     type: 'varchar',
     length: 255,
     nullable: false,
@@ -36,6 +38,7 @@ export class Photo extends DatetimeColumn {
   url: string
 
   @Column({
+    name: 'image_data',
     type: 'datetime',
     nullable: false,
     comment: '이미지 생성 일자',
@@ -43,6 +46,7 @@ export class Photo extends DatetimeColumn {
   image_date: Date
 
   @Column({
+    name: 'image_location',
     type: 'point',
     nullable: true,
     comment: '이미지 위치 정보',
@@ -50,6 +54,7 @@ export class Photo extends DatetimeColumn {
   image_location: Point
 
   @Column({
+    name: 'group_id',
     type: 'int',
     nullable: false,
     comment: '이미지가 업로드된 그룹 아이디',
