@@ -1,46 +1,41 @@
 import {
   Controller,
-  HttpStatus,
-  HttpCode,
-  Post,
   Body,
   Get,
   UseGuards,
   Param,
-  Req,
-  ClassSerializerInterceptor,
-  UseInterceptors,
   Patch,
   Delete,
+  UseInterceptors,
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { UserRequestDto, UserResponseDto } from './user.dto'
 import { AuthGuard } from 'src/api/auth/auth.guard'
-import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { NotFoundUserException } from 'src/commons/custom.error'
 import { SuccessResponse } from 'src/commons/common.response'
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
+import {
+  TransactionInterceptor,
+  TransactionManager,
+} from 'src/middleware/transaction.intercepter'
+import { EntityManager } from 'typeorm'
 
 @ApiTags('User')
 @Controller('users')
 export class UserController {
-  constructor(
-    private usersService: UserService,
-    @InjectPinoLogger(UserController.name)
-    private readonly logger: PinoLogger,
-  ) {
-    this.logger.setContext(UserController.name)
-  }
+  constructor(private usersService: UserService) {}
 
+  @Get('')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: UserResponseDto.User,
   })
-  @Get('')
+  @UseInterceptors(TransactionInterceptor)
   async getUser(
-    @Param('id') id: string,
+    @TransactionManager() queryRunner: EntityManager,
+    @Param('id') id: number,
   ): Promise<UserResponseDto.User> {
-    const user = await this.usersService.getUserById(id)
+    const user = await this.usersService.getUserById(queryRunner, id)
     return new UserResponseDto.User(
       user.id,
       user.email,
@@ -49,32 +44,36 @@ export class UserController {
     )
   }
 
+  @Patch('')
   @UseGuards(AuthGuard)
   @ApiOkResponse({ type: SuccessResponse })
-  @Patch('')
+  @UseInterceptors(TransactionInterceptor)
   async modifyUser(
-    @Param('id') id: string,
+    @TransactionManager() queryRunner: EntityManager,
+    @Param('id') id: number,
     @Body() data: UserRequestDto.PatchUserDto,
   ): Promise<SuccessResponse> {
-    const user = await this.usersService.getUserById(id)
+    const user = await this.usersService.getUserById(queryRunner, id)
     if (!user) {
       throw new NotFoundUserException()
     }
-    await this.usersService.modifyUser(id, data)
+    await this.usersService.modifyUser(queryRunner, id, data)
     return new SuccessResponse(true)
   }
 
+  @Delete('')
   @UseGuards(AuthGuard)
   @ApiOkResponse({ type: SuccessResponse })
-  @Delete('')
+  @UseInterceptors(TransactionInterceptor)
   async deleteUser(
-    @Param('id') id: string,
+    @TransactionManager() queryRunner: EntityManager,
+    @Param('id') id: number,
   ): Promise<SuccessResponse> {
-    const user = await this.usersService.getUserById(id)
+    const user = await this.usersService.getUserById(queryRunner, id)
     if (!user) {
       throw new NotFoundUserException()
     }
-    await this.usersService.deleteUser(id)
+    await this.usersService.deleteUser(queryRunner, id)
     return new SuccessResponse(true)
   }
 }

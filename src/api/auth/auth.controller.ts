@@ -4,22 +4,28 @@ import {
   HttpCode,
   Post,
   Body,
+  UseInterceptors,
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import {
   DuplicationEmailException,
   NotMatchedPasswordException,
+  RemovedEmailException,
   UserNotFoundException,
 } from 'src/commons/custom.error'
 import {
   compareSyncPassword,
   setHashedPassword,
-} from 'src/modules/crypto.module'
+} from 'src/utils/crypto.util'
 import { UserService } from 'src/api/user/user.service'
 import { AuthRequestDto, AuthResponseDto } from './auth.dto'
 import { ConfigService } from '@nestjs/config'
 import { ApiTags } from '@nestjs/swagger'
-import { PinoLogger, InjectPinoLogger } from 'nestjs-pino'
+import {
+  TransactionInterceptor,
+  TransactionManager,
+} from 'src/middleware/transaction.intercepter'
+import { EntityManager } from 'typeorm'
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -28,18 +34,19 @@ export class AuthController {
     private usersService: UserService,
     private jwtService: JwtService,
     private configService: ConfigService,
-    @InjectPinoLogger(AuthController.name)
-    private readonly logger: PinoLogger,
-  ) {
-    this.logger.setContext(AuthController.name)
-  }
+  ) {}
 
-  @HttpCode(HttpStatus.OK)
   @Post('sign/in')
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(TransactionInterceptor)
   async SignIn(
+    @TransactionManager() queryRunner: EntityManager,
     @Body() data: AuthRequestDto.SignIn,
   ): Promise<AuthResponseDto.Token> {
-    const user = await this.usersService.getUserByEmail(data.email)
+    const user = await this.usersService.getUserByEmail(
+      queryRunner,
+      data.email,
+    )
     if (!user) {
       throw new UserNotFoundException()
     }
@@ -55,23 +62,30 @@ export class AuthController {
     return new AuthResponseDto.Token(token)
   }
 
-  @HttpCode(HttpStatus.OK)
   @Post('sign/up')
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(TransactionInterceptor)
   async SignUp(
+    @TransactionManager() queryRunner: EntityManager,
     @Body() data: AuthRequestDto.SignUp,
   ): Promise<AuthResponseDto.Token> {
-    const isDuplication = await this.usersService.existedEmail(
-      data.email,
-    )
-    if (isDuplication) {
+    if (
+      await this.usersService.existedEmail(queryRunner, data.email)
+    ) {
       throw new DuplicationEmailException()
+    }
+
+    if (
+      await this.usersService.isRemovedEmail(queryRunner, data.email)
+    ) {
+      throw new RemovedEmailException()
     }
 
     data.password = await setHashedPassword(
       data.password,
       parseInt(this.configService.get('HASH_SALT')),
     )
-    const user = await this.usersService.createUser(data)
+    const user = await this.usersService.createUser(queryRunner, data)
     const token = await this.jwtService.sign({ id: user.id })
     return new AuthResponseDto.Token(token)
   }

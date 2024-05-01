@@ -9,17 +9,16 @@ import {
 } from 'typeorm'
 import { DatetimeColumn } from './common.entity'
 import { UserGroup } from './user-group.entity'
-import { UUID } from 'crypto'
 
 @Entity({
   name: 'user',
   comment: '사용자 테이블',
 })
 export class User extends DatetimeColumn {
-  @PrimaryGeneratedColumn({
+  @PrimaryGeneratedColumn('increment', {
     name: 'id',
   })
-  id: string
+  id: number
 
   @Column({
     unique: true,

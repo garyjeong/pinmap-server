@@ -1,44 +1,70 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
 import { AuthRequestDto } from 'src/api/auth/auth.dto'
 import { User } from 'src/entities/user.entity'
-import { Repository } from 'typeorm'
+import { EntityManager } from 'typeorm'
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-  ) {}
+  constructor() {}
 
-  async existedEmail(email: string): Promise<boolean> {
-    return await this.userRepository.exists({
+  async existedEmail(
+    queryRunner: EntityManager,
+    email: string,
+  ): Promise<boolean> {
+    return await queryRunner.exists(User, {
       where: { email: email },
     })
   }
 
-  async getUserById(id: string): Promise<User> {
-    return await this.userRepository.findOne({ where: { id: id } })
+  async isRemovedEmail(
+    queryRunner: EntityManager,
+    email: string,
+  ): Promise<boolean> {
+    return (
+      (await queryRunner
+        .createQueryBuilder('user', 'user')
+        .where('user.email = :email', { email })
+        .withDeleted()
+        .getCount()) > 0
+    )
   }
 
-  async getUserByEmail(email: string): Promise<User> {
-    return await this.userRepository.findOne({
+  async getUserById(
+    queryRunner: EntityManager,
+    id: number,
+  ): Promise<User> {
+    return await queryRunner.findOne(User, { where: { id: id } })
+  }
+
+  async getUserByEmail(
+    queryRunner: EntityManager,
+    email: string,
+  ): Promise<User> {
+    return await queryRunner.findOne(User, {
       where: { email: email },
     })
   }
 
-  async createUser(data: AuthRequestDto.SignUp): Promise<User> {
-    const user = await this.userRepository.create({
-      ...data,
-    })
-    return await this.userRepository.save(user)
+  async createUser(
+    queryRunner: EntityManager,
+    data: AuthRequestDto.SignUp,
+  ): Promise<User> {
+    const user = await queryRunner.create(User, { ...data })
+    return await queryRunner.save(user)
   }
 
-  async modifyUser(id: string, data: Partial<User>): Promise<void> {
-    await this.userRepository.update(id, data)
+  async modifyUser(
+    queryRunner: EntityManager,
+    id: number,
+    data: Partial<User>,
+  ): Promise<void> {
+    await queryRunner.update(User, id, data)
   }
 
-  async deleteUser(id: string): Promise<void> {
-    await this.userRepository.softDelete(id)
+  async deleteUser(
+    queryRunner: EntityManager,
+    id: number,
+  ): Promise<void> {
+    await queryRunner.softDelete(User, id)
   }
 }
