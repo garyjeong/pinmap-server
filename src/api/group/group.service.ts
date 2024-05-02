@@ -39,13 +39,14 @@ export class GroupService {
     userId: number,
     name: string,
   ): Promise<Group> {
-    const group = await queryRunner.create(Group, { name: name })
-    await queryRunner.create(UserGroup, {
+    const group = await queryRunner.save(Group, { name: name })
+    await queryRunner.save(UserGroup, {
       user_id: userId,
       group_id: group.id,
-      status_id: UserGroupStatus.INVITED,
+      status_id: UserGroupStatus.JOINED,
       is_owner: true,
     })
+
     return group
   }
 
@@ -61,6 +62,13 @@ export class GroupService {
     queryRunner: EntityManager,
     groupId: number,
   ): Promise<void> {
+    await queryRunner.update(
+      UserGroup,
+      { group_id: groupId },
+      {
+        deleted_at: new Date(),
+      },
+    )
     await queryRunner.softDelete(Group, groupId)
   }
 }

@@ -49,8 +49,8 @@ export class UserService {
     queryRunner: EntityManager,
     data: AuthRequestDto.SignUp,
   ): Promise<User> {
-    const user = await queryRunner.create(User, { ...data })
-    return await queryRunner.save(user)
+    const user = await queryRunner.save(User, { ...data })
+    return user
   }
 
   async modifyUser(

@@ -1,4 +1,5 @@
 export enum UserGroupStatus {
-  WAITING = 1,
-  INVITED = 2,
+  JOINED = 1,
+  WAITING = 2,
+  INVITED = 3,
 }

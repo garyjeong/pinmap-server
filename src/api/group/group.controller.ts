@@ -20,18 +20,40 @@ import {
 import { EntityManager } from 'typeorm'
 import { SuccessResponse } from 'src/commons/common.response'
 import { NotFoundGroupException } from 'src/commons/custom.error'
+import { ParseIntPipe } from '@nestjs/common'
 
 @ApiTags('Groups')
 @Controller('groups')
 export class GroupController {
   constructor(private groupService: GroupService) {}
 
+  @Post('')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(TransactionInterceptor)
+  async createGroup(
+    @TransactionManager() queryRunner: EntityManager,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: GroupRequestDto.GroupDto,
+  ): Promise<GroupResponseDto.Group> {
+    const group = await this.groupService.createGroup(
+      queryRunner,
+      id,
+      data.name,
+    )
+    return new GroupResponseDto.Group(
+      group.id,
+      group.name,
+      group.created_at,
+      group.updated_at,
+    )
+  }
+
   @Get('')
   @UseGuards(AuthGuard)
   @UseInterceptors(TransactionInterceptor)
   async getGroups(
     @TransactionManager() queryRunner: EntityManager,
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<GroupResponseDto.Groups> {
     const groups = await this.groupService.getGroups(queryRunner, id)
     const _groups = await groups.map(
@@ -51,35 +73,17 @@ export class GroupController {
   @UseInterceptors(TransactionInterceptor)
   async getGroup(
     @TransactionManager() queryRunner: EntityManager,
-    @Param('id') id: number,
-    @Param('groupId') groupId: number,
+    @Param('id', ParseIntPipe) id: number,
+    @Param('groupId', ParseIntPipe) groupId: number,
   ): Promise<GroupResponseDto.Group> {
     const group = await this.groupService.getGroup(
       queryRunner,
       id,
       groupId,
     )
-    return new GroupResponseDto.Group(
-      group.id,
-      group.name,
-      group.created_at,
-      group.updated_at,
-    )
-  }
-
-  @Post('')
-  @UseGuards(AuthGuard)
-  @UseInterceptors(TransactionInterceptor)
-  async createGroup(
-    @TransactionManager() queryRunner: EntityManager,
-    @Param('id') id: number,
-    @Body() data: GroupRequestDto.GroupDto,
-  ): Promise<GroupResponseDto.Group> {
-    const group = await this.groupService.createGroup(
-      queryRunner,
-      id,
-      data.name,
-    )
+    if (!group) {
+      throw new NotFoundGroupException()
+    }
     return new GroupResponseDto.Group(
       group.id,
       group.name,
@@ -93,8 +97,8 @@ export class GroupController {
   @UseInterceptors(TransactionInterceptor)
   async modifyGroup(
     @TransactionManager() queryRunner: EntityManager,
-    @Param('id') id: number,
-    @Param('groupId') groupId: number,
+    @Param('id', ParseIntPipe) id: number,
+    @Param('groupId', ParseIntPipe) groupId: number,
     @Body() data: GroupRequestDto.GroupDto,
   ): Promise<SuccessResponse> {
     const group = await this.groupService.getGroup(
@@ -114,8 +118,8 @@ export class GroupController {
   @UseInterceptors(TransactionInterceptor)
   async deleteGroup(
     @TransactionManager() queryRunner: EntityManager,
-    @Param('id') id: number,
-    @Param('groupId') groupId: number,
+    @Param('id', ParseIntPipe) id: number,
+    @Param('groupId', ParseIntPipe) groupId: number,
   ): Promise<SuccessResponse> {
     const group = await this.groupService.getGroup(
       queryRunner,

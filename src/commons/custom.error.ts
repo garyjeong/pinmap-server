@@ -85,7 +85,7 @@ export class RemovedEmailException extends ForbiddenException {
 
 export class NotFoundGroupException extends ForbiddenException {
   constructor(
-    message: string = '탈퇴한 이메일입니다.',
+    message: string = '그룹을 찾을 수 없습니다.',
     public error_code: number = 1009,
   ) {
     super(message)

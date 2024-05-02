@@ -27,10 +27,13 @@ export class InitDatabase1712400046983 implements MigrationInterface {
     )
 
     await queryRunner.query(
-      `INSERT INTO \`pinmap\`.\`user_group_status\` (\`id\`, \`status_name\`) VALUES (1, 'waiting');`,
+      `INSERT INTO \`pinmap\`.\`user_group_status\` (\`id\`, \`status_name\`) VALUES (1, 'joined');`,
     )
     await queryRunner.query(
-      `INSERT INTO \`pinmap\`.\`user_group_status\` (\`id\`, \`status_name\`) VALUES (2, 'invited');`,
+      `INSERT INTO \`pinmap\`.\`user_group_status\` (\`id\`, \`status_name\`) VALUES (2, 'waiting');`,
+    )
+    await queryRunner.query(
+      `INSERT INTO \`pinmap\`.\`user_group_status\` (\`id\`, \`status_name\`) VALUES (3, 'invited');`,
     )
   }
 
