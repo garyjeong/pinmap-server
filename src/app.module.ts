@@ -12,6 +12,8 @@ import { AuthModule } from './api/auth/auth.module'
 import { UserModule } from './api/user/user.module'
 import { JwtAuthModule } from './api/auth/jwt/jwt.module'
 import { LoggerMiddleware } from './middleware/logger.middleware'
+import { APP_FILTER } from '@nestjs/core'
+import { HttpExceptionFilter } from './middleware/exception.filter'
 
 @Module({
   imports: [
@@ -24,6 +26,12 @@ import { LoggerMiddleware } from './middleware/logger.middleware'
     AuthModule,
     UserModule,
     GroupModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
   ],
 })
 export class AppModule implements NestModule {
