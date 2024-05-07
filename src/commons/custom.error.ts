@@ -43,7 +43,7 @@ export class NotFoundTokenException extends UnauthorizedException {
   }
 }
 
-export class ForbiddenAuthenticationException extends ForbiddenException {
+export class ForbiddenAuthenticationException extends NotFoundException {
   constructor(
     message: string = '알 수 없는 사용자입니다.',
     public error_code: number = 1005,
@@ -63,7 +63,7 @@ export class WrongTokenException extends ForbiddenException {
   }
 }
 
-export class NotFoundUserException extends ForbiddenException {
+export class NotFoundUserException extends NotFoundException {
   constructor(
     message: string = '사용자를 찾을 수 없습니다.',
     public error_code: number = 1007,
@@ -83,12 +83,22 @@ export class RemovedEmailException extends ForbiddenException {
   }
 }
 
-export class NotFoundGroupException extends ForbiddenException {
+export class NotFoundGroupException extends NotFoundException {
   constructor(
     message: string = '그룹을 찾을 수 없습니다.',
     public error_code: number = 1009,
   ) {
     super(message)
     this.name = 'NotFoundGroupException'
+  }
+}
+
+export class NotFoundFolderException extends NotFoundException {
+  constructor(
+    message: string = '폴더를 찾을 수 없습니다.',
+    public error_code: number = 1010,
+  ) {
+    super(message)
+    this.name = 'NotFoundFolderException'
   }
 }

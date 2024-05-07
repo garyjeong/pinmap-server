@@ -81,9 +81,6 @@ export class GroupController {
       id,
       groupId,
     )
-    if (!group) {
-      throw new NotFoundGroupException()
-    }
     return new GroupResponseDto.Group(
       group.id,
       group.name,

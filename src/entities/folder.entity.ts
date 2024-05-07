@@ -38,6 +38,14 @@ export class Folder extends DatetimeColumn {
   })
   description: string
 
+  @Column({
+    name: 'group_id',
+    type: 'int',
+    nullable: false,
+    comment: '그룹 아이디',
+  })
+  group_id: number
+
   @ManyToOne(() => Group, (group) => group.folders)
   @JoinColumn({
     name: 'group_id',

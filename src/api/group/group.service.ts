@@ -1,15 +1,30 @@
-import { Injectable, UseInterceptors } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
+import { Injectable } from '@nestjs/common'
 import { UserGroupStatus } from 'src/commons/common.constants'
-import { NotFoundUserException } from 'src/commons/custom.error'
+import {
+  NotFoundGroupException,
+  NotFoundUserException,
+} from 'src/commons/custom.error'
 import { Group } from 'src/entities/group.entity'
 import { UserGroup } from 'src/entities/user-group.entity'
 import { User } from 'src/entities/user.entity'
-import { EntityManager, Repository } from 'typeorm'
+import { EntityManager } from 'typeorm'
 
 @Injectable()
 export class GroupService {
   constructor() {}
+
+  async getGroupIds(
+    queryRunner: EntityManager,
+    userId: number,
+  ): Promise<number[]> {
+    return await queryRunner
+      .findBy(UserGroup, {
+        user_id: userId,
+      })
+      .then((userGroups) => {
+        return userGroups.map((userGroup) => userGroup.group_id)
+      })
+  }
 
   async getGroups(
     queryRunner: EntityManager,
@@ -30,8 +45,13 @@ export class GroupService {
     userId: number,
     groupId: number,
   ): Promise<Group> {
-    const groups = await this.getGroups(queryRunner, userId)
-    return groups.find((group) => group.id === groupId)
+    const groups: Group[] = await this.getGroups(queryRunner, userId)
+    const group: Group = groups.find((group) => group.id === groupId)
+
+    if (!group) {
+      throw new NotFoundGroupException()
+    }
+    return group
   }
 
   async createGroup(
