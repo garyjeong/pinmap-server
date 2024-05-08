@@ -92,6 +92,7 @@ export class FolderController {
   @Get('/folders/trash')
   @UseGuards(AuthGuard)
   @UseInterceptors(TransactionInterceptor)
+  // TODO: Folder에 소속된 Photo들도 모두 삭제 로직 추가
   async getDeletedFolders(
     @TransactionManager() queryRunner: EntityManager,
     @Param('id', ParseIntPipe) userId: number,
