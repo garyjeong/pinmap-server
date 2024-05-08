@@ -1,3 +1,4 @@
+import { PhotoModule } from './api/photo/photo.module'
 import { FolderModule } from './api/folder/folder.module'
 import { GroupModule } from './api/group/group.module'
 import {
@@ -17,6 +18,7 @@ import { HttpExceptionFilter } from './middleware/exception.filter'
 
 @Module({
   imports: [
+    PhotoModule,
     FolderModule,
     ConfigModule.forRoot({
       isGlobal: true,
