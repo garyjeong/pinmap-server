@@ -18,8 +18,6 @@ import { HttpExceptionFilter } from './middleware/exception.filter'
 
 @Module({
   imports: [
-    PhotoModule,
-    FolderModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -28,12 +26,8 @@ import { HttpExceptionFilter } from './middleware/exception.filter'
     AuthModule,
     UserModule,
     GroupModule,
-  ],
-  providers: [
-    {
-      provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
-    },
+    PhotoModule,
+    FolderModule,
   ],
 })
 export class AppModule implements NestModule {

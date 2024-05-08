@@ -4,6 +4,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 
 import * as dotenv from 'dotenv'
 import { ValidationPipe } from '@nestjs/common'
+import { HttpExceptionFilter } from './middleware/exception.filter'
 
 dotenv.config()
 
@@ -11,6 +12,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   })
+  app.useGlobalFilters(new HttpExceptionFilter())
   app.useGlobalPipes(new ValidationPipe())
 
   const config = new DocumentBuilder()
