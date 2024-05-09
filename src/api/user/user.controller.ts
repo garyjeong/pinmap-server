@@ -17,7 +17,7 @@ import { SuccessResponse } from 'src/commons/common.response'
 import {
   TransactionInterceptor,
   TransactionManager,
-} from 'src/middleware/transaction.intercepter'
+} from 'src/middleware/transaction.interceptor'
 import { EntityManager } from 'typeorm'
 
 @ApiTags('User')
@@ -25,7 +25,7 @@ import { EntityManager } from 'typeorm'
 export class UserController {
   constructor(private usersService: UserService) {}
 
-  @Get('')
+  @Get()
   @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: UserResponseDto.User,
@@ -44,7 +44,7 @@ export class UserController {
     )
   }
 
-  @Patch('')
+  @Patch()
   @UseGuards(AuthGuard)
   @ApiOkResponse({ type: SuccessResponse })
   @UseInterceptors(TransactionInterceptor)
@@ -61,7 +61,7 @@ export class UserController {
     return new SuccessResponse(true)
   }
 
-  @Delete('')
+  @Delete()
   @UseGuards(AuthGuard)
   @ApiOkResponse({ type: SuccessResponse })
   @UseInterceptors(TransactionInterceptor)

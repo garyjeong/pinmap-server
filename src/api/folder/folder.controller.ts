@@ -16,22 +16,24 @@ import { AuthGuard } from '../auth/auth.guard'
 import {
   TransactionInterceptor,
   TransactionManager,
-} from 'src/middleware/transaction.intercepter'
+} from 'src/middleware/transaction.interceptor'
 import { EntityManager } from 'typeorm'
 import { FolderRequestDto, FolderResponseDto } from './folder.dto'
 import { Folder } from 'src/entities/folder.entity'
 import { GroupService } from '../group/group.service'
 import { SuccessResponse } from 'src/commons/common.response'
 import { NotFoundFolderException } from 'src/commons/custom.error'
+import { ApiTags } from '@nestjs/swagger'
 
-@Controller()
+@ApiTags('Folders')
+@Controller('folders')
 export class FolderController {
   constructor(
     private groupService: GroupService,
     private folderService: FolderService,
   ) {}
 
-  @Get('/folders')
+  @Get()
   @UseGuards(AuthGuard)
   @UseInterceptors(TransactionInterceptor)
   async getAllFolders(
@@ -62,7 +64,7 @@ export class FolderController {
     return new FolderResponseDto.Folders(folders)
   }
 
-  @Get('/folders')
+  @Get()
   @UseGuards(AuthGuard)
   @UseInterceptors(TransactionInterceptor)
   async getGroupFolders(
@@ -89,7 +91,7 @@ export class FolderController {
     return new FolderResponseDto.Folders(folders)
   }
 
-  @Get('/folders/trash')
+  @Get('/trash')
   @UseGuards(AuthGuard)
   @UseInterceptors(TransactionInterceptor)
   // TODO: Folder에 소속된 Photo들도 모두 삭제 로직 추가
@@ -120,7 +122,7 @@ export class FolderController {
     return new FolderResponseDto.Folders(folders)
   }
 
-  @Post('/folders')
+  @Post()
   @UseGuards(AuthGuard)
   @UseInterceptors(TransactionInterceptor)
   async createFolder(
@@ -147,7 +149,7 @@ export class FolderController {
     )
   }
 
-  @Patch('/folders')
+  @Patch()
   @UseGuards(AuthGuard)
   @UseInterceptors(TransactionInterceptor)
   async updateFolder(
@@ -168,7 +170,7 @@ export class FolderController {
     return new SuccessResponse(true)
   }
 
-  @Delete('/folders')
+  @Delete()
   @UseGuards(AuthGuard)
   @UseInterceptors(TransactionInterceptor)
   async deleteFolder(

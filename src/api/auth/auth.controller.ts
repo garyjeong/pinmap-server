@@ -24,7 +24,7 @@ import { ApiTags } from '@nestjs/swagger'
 import {
   TransactionInterceptor,
   TransactionManager,
-} from 'src/middleware/transaction.intercepter'
+} from 'src/middleware/transaction.interceptor'
 import { EntityManager } from 'typeorm'
 import { GroupService } from '../group/group.service'
 

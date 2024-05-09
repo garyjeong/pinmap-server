@@ -16,7 +16,7 @@ import { GroupRequestDto, GroupResponseDto } from './group.dto'
 import {
   TransactionInterceptor,
   TransactionManager,
-} from 'src/middleware/transaction.intercepter'
+} from 'src/middleware/transaction.interceptor'
 import { EntityManager } from 'typeorm'
 import { SuccessResponse } from 'src/commons/common.response'
 import { NotFoundGroupException } from 'src/commons/custom.error'
@@ -27,7 +27,7 @@ import { ParseIntPipe } from '@nestjs/common'
 export class GroupController {
   constructor(private groupService: GroupService) {}
 
-  @Post('')
+  @Post()
   @UseGuards(AuthGuard)
   @UseInterceptors(TransactionInterceptor)
   async createGroup(
@@ -48,7 +48,7 @@ export class GroupController {
     )
   }
 
-  @Get('')
+  @Get()
   @UseGuards(AuthGuard)
   @UseInterceptors(TransactionInterceptor)
   async getGroups(
