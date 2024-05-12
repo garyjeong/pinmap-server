@@ -16,7 +16,7 @@ export class DatetimeColumn {
   deleted_at: Date | null
 }
 
-export class FileDatetimeColumn extends DatetimeColumn {
+export class FileDatetimeColumn {
   @Column({
     type: 'timestamp',
     name: 'created_at',
@@ -27,4 +27,10 @@ export class FileDatetimeColumn extends DatetimeColumn {
 
   @CreateDateColumn({ type: 'timestamp' })
   inserted_at: Date
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updated_at: Date
+
+  @DeleteDateColumn({ type: 'timestamp' })
+  deleted_at: Date | null
 }
