@@ -21,10 +21,10 @@ export class TransactionInterceptor implements NestInterceptor {
     next: CallHandler,
   ): Promise<Observable<any>> {
     const ctx = context.switchToHttp()
-    const req = ctx.getRequest()
+    const request = ctx.getRequest()
     const queryRunner = this.dataSource.createQueryRunner()
     await queryRunner.startTransaction()
-    req.queryRunner = queryRunner.manager
+    request.queryRunner = queryRunner.manager
 
     return next.handle().pipe(
       catchError(async (err) => {

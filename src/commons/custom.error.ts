@@ -1,5 +1,6 @@
 import {
   ForbiddenException,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common'
@@ -100,5 +101,56 @@ export class NotFoundFolderException extends NotFoundException {
   ) {
     super(message)
     this.name = 'NotFoundFolderException'
+  }
+}
+
+export class NoFileException extends InternalServerErrorException {
+  constructor(
+    message: string = '업로드할 파일이 없습니다.',
+    public error_code: number = 1011,
+  ) {
+    super(message)
+    this.name = 'NoFileException'
+  }
+}
+
+export class InvalidFileExtensionException extends ForbiddenException {
+  constructor(
+    message: string = '허용되지 않는 확장자가 존재합니다.',
+    public error_code: number = 1012,
+  ) {
+    super(message)
+    this.name = 'InvalidFileExtensionException'
+  }
+}
+
+export class TooManyFileException extends ForbiddenException {
+  constructor(
+    message: string = '파일은 최대 5개까지 업로드 가능합니다.',
+    public error_code: number = 1013,
+  ) {
+    super(message)
+    this.name = 'TooManyFileException'
+  }
+}
+
+export class TooLargeFileSizeException extends ForbiddenException {
+  constructor(
+    filename: string,
+    message: string = '파일의 용량이 너무 큽니다.',
+    public error_code: number = 1014,
+  ) {
+    super(`${message} (${filename})`)
+    this.name = 'TooManyFileException'
+  }
+}
+
+export class UnknownFileUploadException extends InternalServerErrorException {
+  constructor(
+    message: string = '파일 업로드 중 알 수 없는 에러가 발생하였습니다.',
+    public error_code: number = 1015,
+  ) {
+    super(message)
+    this.name = 'UnknownFileException'
   }
 }

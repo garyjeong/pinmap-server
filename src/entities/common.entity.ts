@@ -1,4 +1,5 @@
 import {
+  Column,
   CreateDateColumn,
   DeleteDateColumn,
   UpdateDateColumn,
@@ -13,4 +14,17 @@ export class DatetimeColumn {
 
   @DeleteDateColumn({ type: 'timestamp' })
   deleted_at: Date | null
+}
+
+export class FileDatetimeColumn extends DatetimeColumn {
+  @Column({
+    type: 'timestamp',
+    name: 'created_at',
+    nullable: true,
+    comment: '파일 생성 일자',
+  })
+  created_at: Date
+
+  @CreateDateColumn({ type: 'timestamp' })
+  inserted_at: Date
 }

@@ -5,15 +5,14 @@ import {
   Point,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { DatetimeColumn } from './common.entity'
-import { Group } from './group.entity'
+import { FileDatetimeColumn } from './common.entity'
 import { Folder } from './folder.entity'
 
 @Entity({
   name: 'photo',
   comment: '사진 테이블',
 })
-export class Photo extends DatetimeColumn {
+export class Photo extends FileDatetimeColumn {
   @PrimaryGeneratedColumn('uuid', {
     name: 'id',
   })
@@ -36,14 +35,6 @@ export class Photo extends DatetimeColumn {
     comment: '이미지 업로드 URL',
   })
   url: string
-
-  @Column({
-    name: 'image_data',
-    type: 'datetime',
-    nullable: false,
-    comment: '이미지 생성 일자',
-  })
-  image_date: Date
 
   @Column({
     name: 'image_location',
