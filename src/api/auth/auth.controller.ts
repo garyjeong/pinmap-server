@@ -24,8 +24,9 @@ import { ApiTags } from '@nestjs/swagger'
 import {
   TransactionInterceptor,
   TransactionManager,
-} from 'src/middleware/transaction.intercepter'
+} from 'src/middleware/transaction.interceptor'
 import { EntityManager } from 'typeorm'
+import { GroupService } from '../group/group.service'
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -34,6 +35,7 @@ export class AuthController {
     private usersService: UserService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private groupService: GroupService,
   ) {}
 
   @Post('sign/in')
@@ -58,7 +60,7 @@ export class AuthController {
       throw new NotMatchedPasswordException()
     }
 
-    const token = await this.jwtService.sign({ id: user.id })
+    const token = await this.jwtService.signAsync({ id: user.id })
     return new AuthResponseDto.Token(token)
   }
 
@@ -86,7 +88,12 @@ export class AuthController {
       parseInt(this.configService.get('HASH_SALT')),
     )
     const user = await this.usersService.createUser(queryRunner, data)
-    const token = await this.jwtService.sign({ id: user.id })
+    await this.groupService.createGroup(
+      queryRunner,
+      user.id,
+      '기본 그룹',
+    )
+    const token = await this.jwtService.signAsync({ id: user.id })
     return new AuthResponseDto.Token(token)
   }
 }

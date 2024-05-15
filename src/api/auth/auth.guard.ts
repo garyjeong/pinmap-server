@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import {
-  ForbiddenAuthenticationException,
   NotFoundTokenException,
   WrongTokenException,
 } from 'src/commons/custom.error'

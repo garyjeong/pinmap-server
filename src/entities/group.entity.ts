@@ -7,6 +7,7 @@ import {
 } from 'typeorm'
 import { DatetimeColumn } from './common.entity'
 import { UserGroup } from './user-group.entity'
+import { Folder } from './folder.entity'
 
 @Entity({
   name: 'group',
@@ -18,9 +19,17 @@ export class Group extends DatetimeColumn {
   })
   id: number
 
-  @Column({ length: 20, nullable: false, comment: '그룹 이름' })
+  @Column({
+    name: 'name',
+    length: 20,
+    nullable: false,
+    comment: '그룹 이름',
+  })
   name: string
 
   @OneToMany(() => UserGroup, (userGroup) => userGroup.group)
   user_groups: UserGroup[]
+
+  @OneToMany(() => Folder, (folder) => folder.group)
+  folders: Folder[]
 }

@@ -22,6 +22,7 @@ export class User extends DatetimeColumn {
 
   @Column({
     unique: true,
+    name: 'email',
     length: 20,
     nullable: false,
     comment: '이메일',
@@ -29,6 +30,7 @@ export class User extends DatetimeColumn {
   email: string
 
   @Column({
+    name: 'password',
     length: 255,
     nullable: true,
     default: null,
@@ -37,6 +39,7 @@ export class User extends DatetimeColumn {
   password: string
 
   @Column({
+    name: 'username',
     length: 255,
     nullable: true,
     default: null,

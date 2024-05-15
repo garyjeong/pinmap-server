@@ -1,25 +1,26 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   Point,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { DatetimeColumn } from './common.entity'
-import { Group } from './group.entity'
+import { FileDatetimeColumn } from './common.entity'
 import { Folder } from './folder.entity'
 
 @Entity({
   name: 'photo',
   comment: '사진 테이블',
 })
-export class Photo extends DatetimeColumn {
+export class Photo extends FileDatetimeColumn {
   @PrimaryGeneratedColumn('uuid', {
     name: 'id',
   })
   id: string
 
   @Column({
+    name: 'filename',
     type: 'varchar',
     length: 100,
     nullable: false,
@@ -28,6 +29,7 @@ export class Photo extends DatetimeColumn {
   filename: string
 
   @Column({
+    name: 'url',
     type: 'varchar',
     length: 255,
     nullable: false,
@@ -36,26 +38,28 @@ export class Photo extends DatetimeColumn {
   url: string
 
   @Column({
-    type: 'datetime',
-    nullable: false,
-    comment: '이미지 생성 일자',
-  })
-  image_date: Date
-
-  @Column({
-    type: 'point',
+    name: 'latitude',
+    type: 'decimal',
+    precision: 10,
+    scale: 7,
     nullable: true,
-    comment: '이미지 위치 정보',
+    comment: '이미지 위치 정보의 위도',
   })
-  image_location: Point
+  latitude: number
 
   @Column({
-    type: 'int',
-    nullable: false,
-    comment: '이미지가 업로드된 그룹 아이디',
+    name: 'longitude',
+    type: 'decimal',
+    precision: 10,
+    scale: 7,
+    nullable: true,
+    comment: '이미지 위치 정보의 경도',
   })
-  group_id: number
+  longitude: number
 
   @ManyToOne(() => Folder, (folder) => folder.photos)
+  @JoinColumn({
+    name: 'folder_id',
+  })
   folder: Folder
 }

@@ -15,11 +15,17 @@ export class LoggerMiddleware implements NestMiddleware {
 
     response.on('finish', () => {
       const { statusCode } = response
-      this.logger.verbose(
-        `${method} ${originalUrl} ${statusCode} - ${userAgent} ${ip}`,
-      )
-    })
 
+      if (statusCode === 500) {
+        this.logger.error(
+          `${method} ${originalUrl} ${statusCode} - ${response.locals.errorMessage}`,
+        )
+      } else {
+        this.logger.verbose(
+          `${method} ${originalUrl} ${statusCode} - ${userAgent} ${ip}`,
+        )
+      }
+    })
     next()
   }
 }

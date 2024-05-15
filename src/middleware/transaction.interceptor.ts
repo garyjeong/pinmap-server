@@ -3,13 +3,14 @@ import {
   createParamDecorator,
   ExecutionContext,
   HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NestInterceptor,
 } from '@nestjs/common'
-import { firstValueFrom, Observable } from 'rxjs'
-import { catchError, finalize, tap } from 'rxjs/operators'
-import { DataSource, QueryRunner } from 'typeorm'
+import { Observable } from 'rxjs'
+import { catchError, tap } from 'rxjs/operators'
+import { DataSource } from 'typeorm'
 
 @Injectable()
 export class TransactionInterceptor implements NestInterceptor {
@@ -20,20 +21,19 @@ export class TransactionInterceptor implements NestInterceptor {
     next: CallHandler,
   ): Promise<Observable<any>> {
     const ctx = context.switchToHttp()
-    const req = ctx.getRequest()
+    const request = ctx.getRequest()
     const queryRunner = this.dataSource.createQueryRunner()
     await queryRunner.startTransaction()
-    req.queryRunner = queryRunner.manager
+    request.queryRunner = queryRunner.manager
 
     return next.handle().pipe(
       catchError(async (err) => {
         await queryRunner.rollbackTransaction()
         await queryRunner.release()
-        if (err instanceof HttpException) {
-          throw new HttpException(err.getResponse(), err.getStatus())
-        } else {
-          throw new InternalServerErrorException(err)
-        }
+        throw new HttpException(
+          err.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        )
       }),
       tap(async () => {
         await queryRunner.commitTransaction()
