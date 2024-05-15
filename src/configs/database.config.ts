@@ -27,7 +27,7 @@ export const options: DataSourceOptions = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   synchronize: false,
-  logging: true,
+  logging: false,
   entities: [User, UserGroup, UserGroupStatus, Group, Photo, Folder],
   migrations: ['dist/migrations/**/*.js'],
   migrationsRun: false,

@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   Point,
   PrimaryGeneratedColumn,
@@ -37,21 +38,28 @@ export class Photo extends FileDatetimeColumn {
   url: string
 
   @Column({
-    name: 'image_location',
-    type: 'point',
+    name: 'latitude',
+    type: 'decimal',
+    precision: 10,
+    scale: 7,
     nullable: true,
-    comment: '이미지 위치 정보',
+    comment: '이미지 위치 정보의 위도',
   })
-  image_location: Point
+  latitude: number
 
   @Column({
-    name: 'group_id',
-    type: 'int',
-    nullable: false,
-    comment: '이미지가 업로드된 그룹 아이디',
+    name: 'longitude',
+    type: 'decimal',
+    precision: 10,
+    scale: 7,
+    nullable: true,
+    comment: '이미지 위치 정보의 경도',
   })
-  group_id: number
+  longitude: number
 
   @ManyToOne(() => Folder, (folder) => folder.photos)
+  @JoinColumn({
+    name: 'folder_id',
+  })
   folder: Folder
 }

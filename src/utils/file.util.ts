@@ -1,6 +1,4 @@
-import { InternalServerErrorException } from '@nestjs/common'
 import * as fs from 'fs'
-import Jimp from 'jimp'
 import * as heicConvert from 'heic-convert'
 
 export const removeTempFiles = async (
@@ -22,7 +20,7 @@ export const convertHeictoJPG = async (
   const outputBuffer = await heicConvert({
     buffer: inputBuffer,
     format: 'JPEG',
-    quality: 1,
+    quality: 0.6,
   })
 
   fs.writeFileSync(jpgFilePath, outputBuffer)
@@ -36,4 +34,12 @@ export const convertHeictoJPG = async (
     filename: jpgFileName,
     size: fs.statSync(jpgFilePath).size,
   }
+}
+
+export const getS3FileKey = (
+  s3FolderName: string,
+  folderId: string,
+  filename: string,
+): string => {
+  return `${s3FolderName}/${folderId}/${filename}`
 }

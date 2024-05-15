@@ -18,7 +18,9 @@ export const multerDiskOptions: MulterOptions = {
         .map(() => Math.floor(Math.random() * 16).toString(16))
         .join('')
       const extension = path.extname(file.originalname).toLowerCase()
-      callback(null, `${randomName}${extension}`)
+      const filename = `${randomName}${extension}`
+      file.originalname = filename
+      callback(null, filename)
     },
   }),
 }

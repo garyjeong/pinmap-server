@@ -1,3 +1,9 @@
+export interface CustomFile extends Express.Multer.File {
+  latitude?: number
+  longitude?: number
+  created_at?: Date
+}
+
 export namespace PhotoRequestDto {}
 
 export namespace PhotoResponseDto {
