@@ -19,6 +19,7 @@ import { FilesInterceptor } from '@nestjs/platform-express'
 import { ApiTags } from '@nestjs/swagger'
 import { FileValidationPipe } from 'src/middleware/upload.validation.pipe'
 import { multerDiskOptions } from 'src/configs/file.config'
+import { removeTempFiles } from 'src/utils/file.util'
 
 @ApiTags('Photos')
 @Controller('photos')
@@ -42,5 +43,7 @@ export class PhotoController {
   ) {
     const _files: Express.Multer.File[] =
       await this.photoService.getExifData(files)
+
+    removeTempFiles(files)
   }
 }

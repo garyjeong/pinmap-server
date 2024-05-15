@@ -1,9 +1,3 @@
-// export class ExifData {
-//   latitude: number
-//   longitude: number
-//   created_at: Date
-// }
-
 export namespace PhotoRequestDto {}
 
 export namespace PhotoResponseDto {
